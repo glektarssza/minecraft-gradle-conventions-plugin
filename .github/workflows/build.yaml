@@ -1,0 +1,49 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
+name: Build
+on:
+  workflow_call:
+    inputs:
+      ref:
+        description: |
+          The Git reference from which to build the project.
+
+          Defaults to the reference that caused the workflow to be invoked or
+          the default branch if no reference is available.
+        type: string
+        required: false
+        default: ${{github.ref || github.event.repository.default_branch}}
+    secrets:
+      github-token:
+        description: |
+          The token to use when making authenticated calls to the GitHub API.
+        required: true
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    permissions:
+      #-- To clone repository
+      contents: read
+    steps:
+      - id: checkout-repository
+        name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{inputs.ref}}
+          lfs: true
+          token: ${{secrets.github-token || secrets.GITHUB_TOKEN}}
+      - id: setup-java
+        name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          token: ${{secrets.github-token || secrets.GITHUB_TOKEN}}
+          distribution: temurin
+          java-version-file: .java-version
+      - id: setup-gradle
+        name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: wrapper
+      - id: build
+        name: Build
+        run: ./gradlew build
