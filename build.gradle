@@ -1,0 +1,92 @@
+plugins {
+    id('java-gradle-plugin')
+    id('eclipse')
+    id('maven-publish')
+    id('com.diffplug.spotless') version '7.0.4'
+}
+
+project.group = 'com.glektarssza.gradle.conventions'
+project.version = '0.0.1'
+project.description = 'Common buildscript logic for my Minecraft projects.'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+        vendor = JvmVendorSpec.ADOPTIUM
+    }
+    withSourcesJar()
+    withJavadocJar()
+}
+
+gradlePlugin {
+    plugins {
+        website.set("https://github.com/glektarssza/minecraft-gradle-conventions-plugin")
+        vcsUrl.set("https://github.com/glektarssza/minecraft-gradle-conventions-plugin.git")
+        automatedPublishing = false
+        create("${project.group}.projectConventions") {
+            id = "${project.group}.projectConventions"
+            displayName = "G'lek Minecraft Gradle Conventions"
+            description = project.description
+            tags = [
+                'minecraft',
+                'modding',
+                'conventions'
+            ]
+            implementationClass = "${project.group}.ProjectConventionsPlugin"
+        }
+        create("${project.group}.settingsConventions") {
+            id = "${project.group}.settingsConventions"
+            displayName = "G'lek Minecraft Gradle Conventions"
+            description = project.description
+            tags = [
+                'minecraft',
+                'modding',
+                'conventions'
+            ]
+            implementationClass = "${project.group}.SettingsConventionsPlugin"
+        }
+        create("${project.group}.gradlePlugin") {
+            id = "${project.group}.gradlePlugin"
+            displayName = "G'lek Minecraft Gradle Conventions (Gradle Plugin)"
+            description = project.description
+            tags = [
+                'minecraft',
+                'modding',
+                'conventions'
+            ]
+            implementationClass = "${project.group}.GradlePlugin"
+        }
+    }
+}
+
+spotless {
+    encoding('UTF-8')
+
+    format('misc') {
+        target('.gitignore')
+        trimTrailingWhitespace()
+        leadingTabsToSpaces(4)
+        endWithNewline()
+    }
+    java {
+        target('src/*/java/**/*.java')
+        toggleOffOn()
+        removeUnusedImports()
+        trimTrailingWhitespace()
+        endWithNewline()
+        importOrderFile('spotless.importorder')
+        eclipse('4.35').configFile('formatter.xml')
+    }
+    groovyGradle {
+        target '*.gradle'
+        importOrderFile('spotless.importorder')
+        removeSemicolons()
+        greclipse('4.35').configFile('formatter.xml')
+    }
+}
