@@ -10,3 +10,11 @@ jobs:
     uses: ./.github/workflows/build.yaml
     secrets:
       github-token: ${{secrets.GITHUB_TOKEN}}
+  lint:
+    name: Lint
+    permissions:
+      #-- To clone repository
+      contents: read
+    uses: ./.github/workflows/lint.yaml
+    secrets:
+      github-token: ${{secrets.GITHUB_TOKEN}}
