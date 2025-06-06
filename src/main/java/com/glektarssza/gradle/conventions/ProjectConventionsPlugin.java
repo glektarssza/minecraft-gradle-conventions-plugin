@@ -5,7 +5,17 @@ import org.gradle.api.Project;
 
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * The main Gradle project plugin.
+ */
 public class ProjectConventionsPlugin implements Plugin<Project> {
+    /**
+     * Create a new instance.
+     */
+    public ProjectConventionsPlugin() {
+        // -- Does nothing.
+    }
+
     /**
      * Apply the conventions to the given {@link Project} object.
      *
